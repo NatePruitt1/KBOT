@@ -6,7 +6,7 @@
 //eyes that look around in a loop to look like bmo.
 typedef enum state {
   menu,
-  letters,
+  letter_animation,
   eye_animation,
   boot_animation,
 } state;
