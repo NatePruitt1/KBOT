@@ -194,15 +194,14 @@ animation_data *current_anim_data;
 
 //Changes from one state to another state
 state change_state(state new_state, state curr_state) {
-  Serial.print("Transition from ");
-  Serial.print(curr_state);
-  Serial.print(" -> ");
-  Serial.print(new_state);
-  Serial.print("\n");
   if(new_state == eye_animation) {
+    eye_anim_data.frame = 0;
+    eye_anim_data.curr_delay = 0;
     screen_buffer = eye_anim_data.frames[0];
     update_screen = true;
   } else if(new_state == letter_animation) {
+    love_letter_data.frame = 0;
+    love_letter_data.curr_delay = 0;
     screen_buffer = love_letter_data.frames[0];
     update_screen = true;
   }
@@ -236,11 +235,11 @@ void process_state(state *curr_state) {
 int last_volt = 0;
 int curr_volt = 0;
 int threshold = 800;
+int delta_threshold = 100;
 bool switch_pressed(int pin) {
   curr_volt = analogRead(pin);
-
-  bool last_pressed = last_volt < curr_volt;
-  bool is_pressed = curr_volt >= threshold;
+  bool last_pressed = (curr_volt - last_volt >= delta_threshold) && (curr_volt > last_volt);
+  bool is_pressed = curr_volt > threshold;
   last_volt = curr_volt;
   return last_pressed && is_pressed;
 }
@@ -258,9 +257,6 @@ void setup() {
   screen.createChar(5, heart);
   screen.createChar(6, smile);
   check_screen_update();
-
-  Serial.begin(9600);
-  Serial.print("Hello!!");
 }
 
 void loop() {
